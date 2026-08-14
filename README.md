@@ -45,7 +45,7 @@ On top of that sit governance filters: user-vetoed memories are excluded at the 
 
 ### User scope as a security boundary
 
-Retrieval is user-scoped inside the vector query filter, not filtered afterward in application code. A single enforcement point throws rather than executing when user scope is absent, so there is no code path that can accidentally issue a global query. This is treated as a sovereignty boundary, not a multi-tenancy convenience.
+The canonical vector-retrieval path requires user scope before execution and fails closed when scope is absent. Scope is applied inside the vector-query boundary rather than as a post-filter in application code, so the narrowing happens in the search itself instead of in whatever the caller remembered to do afterward. This is treated as a sovereignty boundary, not a multi-tenancy convenience.
 
 ### Provenance that is verified, not claimed
 
@@ -188,7 +188,7 @@ Any demonstration material is synthetic. Where a real implementation detail woul
 
 - **PR-based workflow** with a protected integration branch and explicit promotion PRs to `main`. Over two thousand merged pull requests to date, solo.
 - **CI on every pull request:** environment-usage validation, GraphQL typedef parity, schema and operation validation, lint, tests, typecheck, build, and format checks. Separate workflows cover end-to-end browser tests, mutation testing, dependency audit, and performance budgets.
-- **Evidence-based engineering.** Architectural changes are preceded by written audits that classify every claim as proven, needing proof, or explicitly not-to-be-claimed — including cataloguing the system's own ungoverned seams rather than quietly rounding them up to "governed."
+- **Evidence-based engineering.** Architectural changes are preceded by written audits that classify every claim as proven, needing proof, or explicitly not-to-be-claimed. The retrieval perimeter is periodically audited, with known limitations tracked explicitly rather than silently treated as governed.
 - **Adversarial review.** AI-assisted implementation (Claude Code, Codex CLI) with automated review pinned to the exact current head, and bot findings verified before they are accepted. Several of the durability guarantees described above exist because a review caught a bypass path the original design had missed.
 - **Regressions are treated as product problems, not chores.** The lifecycle work above began with a real-device field trial that disproved an assumption the code had been making for months.
 
@@ -223,5 +223,3 @@ Open to founding engineer, full-stack AI, and mission-driven product roles.
 - **GitHub:** [github.com/wileland](https://github.com/wileland)
 - **Email:** wileland7@gmail.com
 - **Phone:** (210) 775-8143
-</content>
-</invoke>

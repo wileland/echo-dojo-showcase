@@ -69,7 +69,7 @@ AI never enters through a free-floating call. It enters through three narrow, co
 
 **The harness door.** Agent functions execute inside a runner that enforces a strict order: tenancy check, schema-validated input, telemetry span opened, execution, schema-validated output, span closed in a `finally` so spans can never hang open. Tenancy is the harness's responsibility and deliberately does not appear inside any input schema — there is exactly one source of truth for whose data is being touched. Output that violates its contract is rejected, not persisted.
 
-**The tool door.** Model-facing tools are registered behind a registry with trust assertions on the calls that reach it. The retrieval perimeter has been formally audited and every read and write path classified by governance tier — including the paths that are *not* fully governed, which are documented as known seams with their risk stated rather than rounded up to "governed." Naming your own ungoverned side doors is a prerequisite to closing them; claiming they don't exist is how they stay open.
+**The tool door.** Model-facing tools are registered behind a registry with trust assertions on the calls that reach it. The retrieval perimeter is periodically audited, with every read and write path classified by governance tier and known limitations tracked explicitly rather than silently treated as governed. That discipline is the point: an audit whose output is always "everything is fine" is not an audit, and a limitation that has been written down and prioritized is a different kind of risk than one nobody has looked for.
 
 ---
 
@@ -89,7 +89,7 @@ user-scoped vector query
 
 Several properties are worth naming explicitly.
 
-**User scope is enforced inside the vector query filter**, not applied as a post-filter in application code, and a single enforcement point throws rather than executing when scope is absent. Cross-user retrieval is not a bug that could occur; it is a code path that does not exist.
+**The canonical vector-retrieval path requires user scope before execution and fails closed when scope is absent.** Scope is applied inside the vector-query boundary rather than as a post-filter in application code, so the narrowing is part of the search rather than a step a caller has to remember. Enforcement is centralized at that boundary rather than reimplemented per call site, which is what makes it auditable.
 
 **The exclusion set is bounded.** Anti-repetition state grows without limit as a conversation continues. Passing all of it into the query would eventually exceed the search engine's clause limits — a failure that would present as a broken product rather than a degraded one. Only the most recent bounded window is passed down.
 
@@ -229,5 +229,3 @@ Where an implementation detail would function as a recipe rather than as evidenc
 | Full-stack engineering | React client, Node/Express API, GraphQL contracts, document + vector data modeling, media ingestion, realtime |
 | Product judgment | Source material outranks derived output; the system says what it can prove and labels what it cannot |
 | Communication | Decisions explained with their tradeoffs, and claims scoped to what the implementation actually supports |
-</content>
-</invoke>
